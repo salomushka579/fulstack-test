@@ -1,19 +1,17 @@
 <?php
+
 namespace App\GraphQL\Resolvers;
 
 use App\Database\Connection;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\ObjectType;
 
-class ProductResolver
-{
-    public static function getProductsField(): array
-    {
+class ProductResolver {
+    public static function getProductsField(): array {
         return [
             'type' => Type::listOf(self::getProductType()),
             'resolve' => function () {
                 $pdo = Connection::getInstance()->getPdo();
-
                 $stmt = $pdo->query("
                     SELECT p.id, p.name, p.description, p.in_stock, p.brand,
                            pr.amount as price
@@ -21,10 +19,9 @@ class ProductResolver
                     LEFT JOIN prices pr ON pr.product_id = p.id
                     GROUP BY p.id
                 ");
-
                 $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-                return array_map(static function ($row) {
+                return array_map(function ($row) {
                     return [
                         'id' => $row['id'],
                         'name' => $row['name'],
@@ -38,8 +35,7 @@ class ProductResolver
         ];
     }
 
-    private static function getProductType(): ObjectType
-    {
+    private static function getProductType(): ObjectType {
         return new ObjectType([
             'name' => 'Product',
             'fields' => [
@@ -49,7 +45,6 @@ class ProductResolver
                 'inStock' => Type::nonNull(Type::boolean()),
                 'brand' => Type::string(),
                 'price' => Type::float(),
-
             ],
         ]);
     }
