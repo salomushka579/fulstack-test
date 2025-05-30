@@ -14,6 +14,7 @@ class Schema
             'name' => 'Query',
             'fields' => [
                 'products' => ProductResolver::getProductsField(),
+                'product' => ProductResolver::getProductField(),
                 'categories' => CategoryResolver::getCategoriesField(),
             ],
         ]);
